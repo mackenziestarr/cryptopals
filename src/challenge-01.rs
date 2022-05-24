@@ -1,24 +1,5 @@
-
-use std::fmt;
-
-#[derive(Debug)]
-struct InvalidHexadecimal {
-    byte: u8
-}
-impl fmt::Display for InvalidHexadecimal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "invalid hexadecimal: {:08b}", self.byte)
-    }
-}
-
-fn hex_to_num(hex: &u8) -> Result<u8, InvalidHexadecimal> {
-    match hex {
-        b'0'..=b'9' => Ok(hex - b'0'),
-        b'a'..=b'f' => Ok(hex - b'a' + 10),
-        b'A'..=b'F' => Ok(hex - b'A' + 10),
-        b => Err(InvalidHexadecimal{byte: *b})
-    }
-}
+mod lib;
+use lib::hex;
 
 fn main() {
     // construct vector of all base64 characters
@@ -36,17 +17,7 @@ fn main() {
     // TODO: add support for padding
     // let hex: &str = "492";
 
-    let bytes: Vec<u8> = hex
-        .as_bytes()
-        .iter()
-        .map(hex_to_num)
-        .collect::<Result<Vec<u8>, InvalidHexadecimal>>()
-        .unwrap()
-        .chunks(2)
-        .map(|w| w[0] << 4 | w[1])
-        .collect(); 
-
-    let base64_string: Vec<u8> = bytes
+    let base64_string: Vec<u8> = hex::decode(hex)
         .chunks(3)
         .map(|c| {
             let big_endian_bytes: [u8; 4] = [c[0], c[1], c[2], 0x00];

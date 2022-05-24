@@ -2,3 +2,11 @@
 name = "cryptopals"
 version = "0.1.0"
 edition = "2021"
+
+[[bin]]
+name="challenge-01"
+path="src/challenge-01.rs"
+
+[[bin]]
+name="challenge-02"
+path="src/challenge-02.rs"
