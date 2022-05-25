@@ -10,3 +10,7 @@ path="src/challenge-01.rs"
 [[bin]]
 name="challenge-02"
 path="src/challenge-02.rs"
+
+[[bin]]
+name="challenge-03"
+path="src/challenge-03.rs"
