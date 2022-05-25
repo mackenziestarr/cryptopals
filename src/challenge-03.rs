@@ -29,16 +29,17 @@ fn main() {
         'd', 'l', 'u', ' ',
     ].into_iter().collect();
 
-    let mut scored: Vec<(String, usize)> = (b'\0'..=b'\x7f')
+    let mut scored: Vec<(char, String, usize)> = (b'\0'..=b'\x7f')
         .into_iter()
         .map(|character| {
             let xord = xor(&bytes, character);
             (
+                character as char,
                 String::from_utf8(xord.clone()).expect("Found invalid UTF-8"), 
                 score(&xord, &frequency_table)
             )
         })
         .collect();
-    scored.sort_by_key(|tuple| !tuple.1);
+    scored.sort_by_key(|tuple| !tuple.2);
     println!("{:#?}", scored[0..5].to_vec());
 }
