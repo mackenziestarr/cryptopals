@@ -15,7 +15,7 @@ fn main() {
         &hex::decode("1c0111001f010100061a024b53535009181c"),
         &hex::decode("686974207468652062756c6c277320657965"),
     );
-    println!("{}", hex::encode(&out));
+    assert_eq!(hex::encode(&out), "746865206b696420646f6e277420706c6179");
 }
 
 

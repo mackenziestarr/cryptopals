@@ -14,3 +14,7 @@ path="src/challenge-02.rs"
 [[bin]]
 name="challenge-03"
 path="src/challenge-03.rs"
+
+[[bin]]
+name="challenge-04"
+path="src/challenge-04.rs"

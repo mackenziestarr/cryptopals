@@ -35,7 +35,8 @@ fn main() {
         })
         .collect();
  
-    println!("{}",String::from_utf8(base64_string).expect("Found invalid UTF-8"));
+    let answer = String::from_utf8(base64_string).expect("Found invalid UTF-8");
+    assert_eq!(answer, "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t")
 }
 
 

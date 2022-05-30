@@ -1,3 +1,43 @@
+pub mod single_byte_xor {
+    use std::ops::RangeInclusive;
+
+    static FREQUENCY_TABLE: [char; 12] = [
+        'e', 't', 'a', 'o',
+        'i', 'n', 's', 'h',
+        'd', 'l', 'u', ' ',
+    ];
+
+    pub fn xor(input: &[u8], character: u8) -> Vec<u8> {
+        input.iter().map(|x| x ^ character).collect()
+    }
+
+    pub fn score(input: &[u8]) -> usize {
+        input
+        .iter()
+        .filter(|&b| {
+            let mut c = *b as char;
+            c.make_ascii_lowercase();
+            FREQUENCY_TABLE.contains(&c)
+        })
+        .count()
+    }
+
+    pub fn score_against_range(range: RangeInclusive<u8>, bytes: &[u8]) -> Vec<(char, String, usize)> {
+        range
+            .into_iter()
+            .map(|character| {
+                let xord = xor(&bytes, character);
+                (
+                    character as char,
+                    String::from_utf8_lossy(&xord).into_owned(), 
+                    score(&xord)
+                )
+            })
+            .collect()
+    }
+
+}
+
 pub mod hex {
     use std::fmt;
 
