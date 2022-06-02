@@ -88,3 +88,60 @@ pub mod hex {
     }
 
 }
+
+pub mod base64 {
+    // TODO(@mstarr) add support for padding
+    use std::collections::HashMap;
+
+    static BASE64: &[u8; 65] = 
+        b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+    #[test]
+    pub fn test_decode() {
+        assert_eq!(
+            decode(b"bGlnaHQgd29y"),
+            b"light wor"
+        )
+    }
+
+    pub fn decode(input: &[u8]) -> Vec<u8> {
+        // map of base 64 chars to their index value e.g. 'B' => 2
+        let mut base64_index = HashMap::new();
+        BASE64.iter().enumerate().for_each(|(index, char)| {
+            base64_index.insert(char, index as u8);        
+        });
+        input
+            .iter()
+            .map(|byte| base64_index[byte])
+            .collect::<Vec<u8>>()
+            .chunks(4)
+            .flat_map(|chunk| {
+                vec![
+                    &chunk[0] << 2 | (&chunk[1] & 0b0011_0000) >> 4,
+                    (&chunk[1] & 0b0000_1111) << 4 | (&chunk[2] & 0b0011_1100) >> 2,
+                    (&chunk[2] & 0b0000_0011) << 6 | (&chunk[3] & 0b0011_1111)
+                ]
+            })
+            .collect()
+    }
+    pub fn encode(input: &[u8]) -> String {
+        let output: Vec<u8> = input
+            .chunks(3)
+            .map(|c| {
+                let big_endian_bytes: [u8; 4] = [c[0], c[1], c[2], 0x00];
+                u32::from_be_bytes(big_endian_bytes)
+            })
+            .flat_map(|big_endian_bytes| {
+                (1..=4)
+                    .rev()
+                    .map(|index| {
+                        let sextet = ((big_endian_bytes >> (6 * index)) & 0b1111_1100) >> 2;
+                        let x: usize = (sextet).try_into().unwrap();
+                        BASE64[x]
+                    })
+                    .collect::<Vec<u8>>()
+            })
+            .collect();
+        String::from_utf8(output).expect("Found invalid UTF-8")    
+    }
+}
